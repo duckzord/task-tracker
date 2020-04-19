@@ -1,5 +1,6 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
+import axios from 'axios';
 
 // Display some tasks
 
@@ -11,11 +12,21 @@ class TaskContainer extends React.Component {
 
     this.state = {
       userName: 'Tom Gray',
-      taskList: ['Do this', 'Do that', 'Also do this']
+      taskList: []
     }
 
     this.addTask = this.addTask.bind(this)
   }
+
+  componentDidMount() {
+    axios.get("http://localhost:5003/tasks")
+      .then(res => res.data.map((task) => {
+        this.setState((state) => ({
+          taskList: this.state.taskList.concat([task.description])
+        }))
+      }))
+  }
+
   addTask(task) {
     this.setState((state) => ({
       taskList: state.taskList.concat([task])
