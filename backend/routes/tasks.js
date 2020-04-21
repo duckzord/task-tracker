@@ -8,21 +8,39 @@ router.route('/').get((req, res) => {
 });
 
 router.route('/add').post((req, res) => {
-    const username = req.body.username;
     const description = req.body.description;
-    const priority = Number(req.body.priority);
+    const priority = req.body.priority;
     const deadline = Date.parse(req.body.deadline);
 
     const newTask = new Task({
-        username,
         description,
         priority,
         deadline,
     });
 
     newTask.save()
-      .then(() => res.json('Exercise added!'))
+      .then(() => res.json('Task added!'))
       .catch(err => res.status(400).json('Error: ') + err);
 });
+
+router.route('/:id').get((req, res) => {
+  Task.findById(req.params.id)
+    .then(task => res.json(task))
+    .catch(err => res.status(400).json('Error: ' + err));
+});
+
+router.route('/update/:id').post((req, res) => {
+  Task.findById(req.params.id)
+    .then(task => {
+      task.description = req.body.description;
+      task.priority = req.body.priority;
+      task.deadline = Date.parse(req.body.deadline);
+
+      task.save()
+        .then(() => res.json('Task updated!'))
+        .catch(err => res.status(400).json('Error: ') + err);
+    })
+    .catch(err => res.status(400).json('Error: ' + err))
+})
 
 module.exports = router;

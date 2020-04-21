@@ -1,101 +1,25 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import axios from 'axios';
+import { BrowserRouter as Router, Route } from "react-router-dom";
+import "bootstrap/dist/css/bootstrap.min.css";
+import Navbar from "./components/navbar.component.js";
+import TaskList from "./components/task-list.component";
+import EditTask from "./components/edit-task.component";
+import CreateTask from "./components/create-task.component";
 
-// Display some tasks
 
-// Add a new task
-
-class TaskContainer extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      userName: 'Tom Gray',
-      taskList: []
-    }
-
-    this.addTask = this.addTask.bind(this)
-  }
-
-  componentDidMount() {
-    axios.get("http://localhost:5003/tasks")
-      .then(res => res.data.map((task) => {
-        this.setState((state) => ({
-          taskList: this.state.taskList.concat([task.description])
-        }))
-      }))
-  }
-
-  addTask(task) {
-    this.setState((state) => ({
-      taskList: state.taskList.concat([task])
-    }))
-  }
-
-  render() {
-    return (
-      <div>
-        <h3> {this.state.userName} </h3>
-        <AddTask addNew={this.addTask} />
-        <ShowTasks tasks={this.state.taskList} />
+function App() {
+  return (
+    <Router>
+      <div className="container">
+        <Navbar />
+        <br/>
+        <Route path="/" exact component={TaskList} />
+        <Route path="/edit/:id" component={EditTask} />
+        <Route path="/create" component={CreateTask} />
       </div>
-    )
-  }
+    </Router>
+  )
 }
 
-class ShowTasks extends React.Component {
-  render() {
-    return (
-      <div>
-        <h3> Task List: </h3>
-        <ul>
-          {this.props.tasks.map((task) => {
-            return <li> {task} </li>
-          })}
-        </ul>
-      </div>
-    )
-  }
-}
-
-class AddTask extends React.Component {
-  constructor(props) {
-    super(props)
-
-    this.state = {
-      newTask: ''
-    }
-
-    this.updateNewTask = this.updateNewTask.bind(this)
-    this.handleAddNew = this.handleAddNew.bind(this)
-  }
-
-  updateNewTask(e) {
-    this.setState({
-      newTask: e.target.value
-    })
-  }
-  
-  handleAddNew() {
-    this.props.addNew(this.state.newTask)
-    this.setState({
-      newTask: ''
-    })
-  }
-
-  render() {
-    return (
-      <div>
-        <input
-          type="text"
-          value={this.state.newTask}
-          onChange={this.updateNewTask}
-        />
-        <button onClick={this.handleAddNew}> Add Task </button>
-      </div>
-    )
-  }
-}
-
-ReactDOM.render(<TaskContainer />, document.getElementById('root'))
+ReactDOM.render(<App />, document.getElementById('root'))
