@@ -7,6 +7,8 @@ const TaskData = props => {
         <tr>
             <td>{props.task.description}</td>
             <td>{props.task.priority}</td>
+            <td>{props.task.difficulty}</td>
+            <td>{props.task.size}</td>
             <td>{props.task.deadline.substring(0,10)}</td>
             <td>
                 <Link to={"/edit/"+props.task._id}>edit</Link>
@@ -50,6 +52,8 @@ export default class TaskList extends Component {
                         <tr>
                             <th>Description</th>
                             <th>Priority</th>
+                            <th>Difficulty</th>
+                            <th>Size</th>
                             <th>Deadline</th>
                         </tr>
                     </thead>

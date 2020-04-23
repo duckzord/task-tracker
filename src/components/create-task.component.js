@@ -10,22 +10,23 @@ export default class CreateTask extends Component {
         this.state = {
             description: '',
             priority: '',
+            difficuilty: '',
+            size: '',
             deadline: new Date(),
-            priorities: []
+            priorities: [],
+            difficulties: [],
+            sizes: []
         }
 
         this.onChangeDescription = this.onChangeDescription.bind(this);
         this.onChangePriority = this.onChangePriority.bind(this);
+        this.onChangeDifficulty = this.onChangeDifficulty.bind(this);
+        this.onChangeSize = this.onChangeSize.bind(this);
         this.onChangeDeadline = this.onChangeDeadline.bind(this);
         this.onSubmit = this.onSubmit.bind(this);
     }
 
     componentDidMount() {
-        this.setState( {
-            priorities: ['Test Priority', 'Test Priority 2'],
-            priority: 'Test Priority'
-        })
-
         axios.get('http://localhost:5003/priorities')
           .then(response => {
               if (response.data.length > 0) {
@@ -34,7 +35,27 @@ export default class CreateTask extends Component {
                     priority: response.data[0]
                 })
               }
-          })
+          });
+
+        axios.get('http://localhost:5003/difficulties')
+            .then(response => {
+                if (response.data.length > 0) {
+                this.setState( {
+                    difficulties: response.data.map((difficulty) => difficulty.name),
+                    difficulty: response.data[0]
+                })
+                }
+            });
+
+        axios.get('http://localhost:5003/sizes')
+            .then(response => {
+                if (response.data.length > 0) {
+                this.setState( {
+                    sizes: response.data.map((size) => size.name),
+                    size: response.data[0]
+                })
+                }
+            });
     }
 
     onChangeDescription(e) {
@@ -46,6 +67,18 @@ export default class CreateTask extends Component {
     onChangePriority(e) {
         this.setState({
             priority: e.target.value
+        })
+    }
+
+    onChangeDifficulty(e) {
+        this.setState({
+            difficulty: e.target.value
+        })
+    }
+
+    onChangeSize(e) {
+        this.setState({
+            size: e.target.value
         })
     }
 
@@ -61,6 +94,8 @@ export default class CreateTask extends Component {
         const task = {
             description: this.state.description,
             priority: this.state.priority,
+            difficulty: this.state.difficulty,
+            size: this.state.size,
             deadline: this.state.deadline
         }
 
@@ -79,6 +114,15 @@ export default class CreateTask extends Component {
                 <h3>Create New Task</h3>
                 <form onSubmit={this.onSubmit}>
                     <div className="form-group">
+                        <label>Description: </label>
+                        <input type="text"
+                               required
+                               className="form-control"
+                               value={this.state.description}
+                               onChange={this.onChangeDescription}
+                        />
+                    </div>
+                    <div className="form-group">
                         <label>Priority: </label>
                         <select ref="userInput"
                                 required
@@ -95,13 +139,36 @@ export default class CreateTask extends Component {
                         </select>
                     </div>
                     <div className="form-group">
-                        <label>Description: </label>
-                        <input type="text"
-                               required
-                               className="form-control"
-                               value={this.state.description}
-                               onChange={this.onChangeDescription}
-                        />
+                        <label>Difficulty: </label>
+                        <select ref="userInput"
+                                required
+                                className="form-control"
+                                value={this.state.difficulty}
+                                onChange={this.onChangeDifficulty}>
+                            {
+                                this.state.difficulties.map(function(difficulty) {
+                                    return <option
+                                        key={difficulty}
+                                        value={difficulty}> {difficulty} </option>
+                                })
+                            }
+                        </select>
+                    </div>
+                    <div className="form-group">
+                        <label>Size: </label>
+                        <select ref="userInput"
+                                required
+                                className="form-control"
+                                value={this.state.size}
+                                onChange={this.onChangeSize}>
+                            {
+                                this.state.sizes.map(function(size) {
+                                    return <option
+                                        key={size}
+                                        value={size}> {size} </option>
+                                })
+                            }
+                        </select>
                     </div>
                     <div className="form-group">
                         <label>Deadline: </label>
